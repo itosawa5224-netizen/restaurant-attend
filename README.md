@@ -61,7 +61,6 @@
 | CI/CD | ? ~~GitHub Actions~~ |
 | テスト | ? ~~Vitest / Playwright~~ |
 
-## ？何を考えて作ったか
 
 ## 🧠 生成AIの使用について
 
