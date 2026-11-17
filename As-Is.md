@@ -18,11 +18,11 @@ flowchart TD
 
     subgraph Board [ウェイティングボード（紙）]
         BoardData[(待機リスト<br>名前・人数〔大人/子ども〕)]
-        BoadDelete[(待機情報を消去)]
-        BoardUpdated[(更新済みリスト<br>案内済み消し込み)]
+        BoadDelete[(【消去】<br>待機情報を消去)]
+        BoardUpdated[(【更新】<br>案内済み消し込み)]
     end
 
-     %% フロー接続
+    Customer ~~~ Board ~~~ Leader ~~~ Hall 
     WriteBoard --> BoardData
     BoardData -.-> CheckBoard
     WaitCancel --> BoadDelete
@@ -34,22 +34,25 @@ flowchart TD
     subgraph Leader [フロアリーダー]
         CheckBoard[待機客の<br>受付順・人数構成を確認する]
          --> CheckCleanSeat[片付け済みの空席状況を確認する]
+         --> Node(( ))
          --> HasEmptySeat{案内可能な<br>空席があるか？}
 
         HasEmptySeat -- Yes（空席あり） --> SelectSeat[空席から<br>案内する席を選択する] 
         HasEmptySeat -- No (空席なし) --> OderSeat[片付け最優先の席を指示出し]
         
+        SelectSeat --> DecideSeat
         DecideSeat[案内席の決定] 
          --> CallCustomer[店頭で名前・人数を呼び出す]
 
         OderSeat --> DecideSeat
         CallCustomer ~~~ CrossOut[該当行に案内済みの線を引く]
+        CallCustomer --> CrossOut
         GuideSeat[席へ先導する]
+
     end
 
     CrossOut ~~~ BoardUpdated ~~~ Respond
-
-    SelectSeat --> DecideSeat
+    CheckBoard ~~~ Wait
     CallCustomer --> Respond
     Respond --> GuideSeat
     
@@ -59,37 +62,33 @@ flowchart TD
 
 
     subgraph Hall [ホールスタッフ]
-        CleanTable[退店後の片付け・<br>テーブルリセットを行う]
-         --> ReportReady[片付け完了]
-
-         CleanTable2[退店後の片付け・<br>テーブルリセットを行う]
-         --> ReportReady2[片付け完了]
+        Bussing[【バッシング】<br>退店後の片付け・<br>テーブルリセットを行う]
+        %%-->
+        SeatReady[完了]
     end
 
-   
-    ReportReady -.口頭共有.- CheckCleanSeat
-    CheckCleanSeat -.目視確認.- SeatEmpty
-    
-    ReportReady2 -.口頭共有.- DecideSeat
-    OderSeat -.口頭指示.-> CleanTable2
-    DecideSeat -.目視確認.- SeatAvailable
+    Bussing -.-> State
+    State -.-> SeatReady
 
-    ReportReady2 --> SeatAvailable
+    SeatReady -.口頭共有.-> CheckCleanSeat
+    CheckCleanSeat -.目視確認.- State
+    
 
 
     subgraph State [座席状況]
-        SeatMax[(満席<br>【空席】:なし<br>【片づけ可能席】:なし )]
+        direction TD
+        SeatMax[(満席<br>【空席】:なし<br>【片づけ可能席】:なし <br>【案内可能席】:なし)]
          -->
-        SeatStandby[(バッシング待ち<br>【空席】:なし<br>【片づけ可能席】:あり )]
-        SeatEmpty
-        SeatAvailable 
+        SeatStandby[(空席なし<br>【空席】:なし<br>【片づけ可能席】:あり <br>【案内可能席】:なし)]
+         -.OR.-
+        SeatEmpty[(空席あり<br>【空席】:あり<br>【片づけ可能席】:あり/なし <br>【案内可能席】:なし)]
+         -.OR.-
+        SeatAvailable[(案内可能<br>【空席】:あり<br>【片づけ可能席】:あり/なし <br>【案内可能席】:あり)]
+        
     end 
     
-    Customer ~~~ Board ~~~ Leader ~~~ Hall 
-    CheckBoard ~~~ Wait
-
-    SeatStandby  --> CleanTable
-    ReportReady --> SeatEmpty
+    
+    
     
 
 ```
@@ -114,4 +113,4 @@ flowchart TD
 2. 呼び出し時に不在の場合\
 （ボードに不在印をつけ、次の待機組へ進む）
 3. 席へ先導後に別の席を希望された場合\
-（空席再確認・ボード修正のうえ再誘導）
+（空席再確認・テーブルリセットのうえ再誘導）
