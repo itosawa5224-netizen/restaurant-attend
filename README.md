@@ -56,10 +56,10 @@ Java / Spring Boot / JSP / JDBC / MySQL
 
 ### ドキュメント・設計
 - 要件定義書 → [01_requirements_v1.md](./docs/01_requirements_v1.md)
-%% - 外部設計書 
-- UI設計（画面レイアウト・画面遷移）→ [02_user_interface.md](./docs/02_user_interface.md)
+- UI設計 → [02_user_interface.md](./docs/02_user_interface.md)
 - データベース設計 → [03_database.md](./docs/03_database.md)
-%% - 内部設計書 
+<!-- - 外部設計書 --> 
+<!-- - 内部設計書 --> 
 
 
 ### コードの主要構成
