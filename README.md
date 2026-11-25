@@ -51,7 +51,7 @@
 ## 🛠 詳細
 
 ### 使用技術(仮)
-Java / Spring Boot / JSP / JDBC / MySQL・SQLite
+Java / Spring Boot / JSP / JDBC / MySQL
 
 
 ### ドキュメント・設計
